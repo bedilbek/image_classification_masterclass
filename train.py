@@ -1,25 +1,9 @@
 import matplotlib.pyplot as plt
 from keras_preprocessing.image import ImageDataGenerator, np
 
-from config import IMG_HEIGHT, IMG_WIDTH, IMG_CHANNEL
-from model import TrafficSignNet
-
-CLASSES = ['stop', 'traffic']
-
-train_data_dir = 'v_data/train'
-validation_data_dir = 'v_data/test'
-nb_train_samples = 200
-nb_validation_samples = 50
-epochs = 10
-batch_size = 10
-
-model = TrafficSignNet.build((IMG_WIDTH, IMG_HEIGHT, IMG_CHANNEL), 2)
-
-model.summary()
-
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-print(model.get_config())
+from config import IMG_HEIGHT, IMG_WIDTH, IMG_CHANNEL, TRAIN_DATA_DIR, BATCH_SIZE, VALIDATION_DATA_DIR, \
+    NB_TRAIN_SAMPLES, EPOCHS, NB_VALIDATION_SAMPLES
+from model import ClassificationNet
 
 train_datagen = ImageDataGenerator(
     rescale=1. / 255,
@@ -30,23 +14,32 @@ train_datagen = ImageDataGenerator(
 validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
 train_generator = train_datagen.flow_from_directory(
-    train_data_dir,
+    TRAIN_DATA_DIR,
     target_size=(IMG_WIDTH, IMG_HEIGHT),
-    batch_size=batch_size,
-    class_mode='categorical')
+    batch_size=BATCH_SIZE,
+    class_mode='categorical'
+)
 
 validation_generator = validation_datagen.flow_from_directory(
-    validation_data_dir,
+    VALIDATION_DATA_DIR,
     target_size=(IMG_WIDTH, IMG_HEIGHT),
-    batch_size=batch_size,
-    class_mode='categorical')
+    batch_size=BATCH_SIZE,
+    class_mode='categorical'
+)
+
+model = ClassificationNet.build((IMG_WIDTH, IMG_HEIGHT, IMG_CHANNEL), validation_generator.num_classes)
+
+model.summary()
+
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 H = model.fit_generator(
     train_generator,
-    steps_per_epoch=nb_train_samples // batch_size,
-    epochs=epochs,
+    steps_per_epoch=NB_TRAIN_SAMPLES // BATCH_SIZE,
+    epochs=EPOCHS,
     validation_data=validation_generator,
-    validation_steps=nb_validation_samples // batch_size)
+    validation_steps=NB_VALIDATION_SAMPLES // BATCH_SIZE
+)
 
 model.save_weights('model_saved.h5')
 
@@ -63,8 +56,8 @@ for (i, l) in enumerate(lossNames):
     ax.set_title(title)
     ax.set_xlabel("Epoch #")
     ax.set_ylabel("Loss")
-    ax.plot(np.arange(0, epochs), H.history[l], label=l)
-    ax.plot(np.arange(0, epochs), H.history["val_" + l],
+    ax.plot(np.arange(0, EPOCHS), H.history[l], label=l)
+    ax.plot(np.arange(0, EPOCHS), H.history["val_" + l],
             label="val_" + l)
     ax.legend()
 
@@ -74,7 +67,7 @@ plt.savefig("classification_model_losses.png")
 plt.close()
 
 # create a new figure for the accuracies
-accuracyNames = ['acc']
+accuracyNames = ['accuracy']
 plt.style.use("ggplot")
 (fig, ax) = plt.subplots()
 
@@ -84,12 +77,12 @@ for (i, l) in enumerate(accuracyNames):
     ax.set_title("Accuracy for {}".format(l))
     ax.set_xlabel("Epoch #")
     ax.set_ylabel("Accuracy")
-    ax.plot(np.arange(0, epochs), H.history[l], label=l)
-    ax.plot(np.arange(0, epochs), H.history["val_" + l],
+    ax.plot(np.arange(0, EPOCHS), H.history[l], label=l)
+    ax.plot(np.arange(0, EPOCHS), H.history["val_" + l],
             label="val_" + l)
     ax.legend()
 
 # save the accuracies figure
 plt.tight_layout()
-plt.savefig("results/classification_model_accs.png")
+plt.savefig("classification_model_accs.png")
 plt.close()

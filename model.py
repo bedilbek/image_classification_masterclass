@@ -3,7 +3,7 @@ from keras import backend as K
 from keras.layers import Conv2D, Dropout, Flatten, Dense
 
 
-class TrafficSignNet:
+class ClassificationNet:
 
     @staticmethod
     def build(width_height_channel, num_classes):
@@ -21,8 +21,8 @@ class TrafficSignNet:
         x = Conv2D(128, kernel_size=(3, 3), activation='relu')(x)
         x = Flatten()(x)
         x = Dense(128, activation='relu')(x)
-        x = Dense(num_classes, activation='softmax', name='traffic_sign_output')(x)
+        x = Dense(num_classes, activation='softmax', name='classification_net_output')(x)
 
-        model = Model(inputs=inputs, outputs=x, name='TrafficSignNet')
+        model = Model(inputs=inputs, outputs=x, name='ClassificationNet')
 
         return model
