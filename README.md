@@ -3,7 +3,7 @@
 
 This repository is divided into 2 parts:
   1. Source Code
-  2. The presentation [Python AI Masterclass](Python AI Masterclass.pptx)
+  2. The presentation [Python AI Masterclass](Python_AI_Masterclass.pptx)
   
  ## Source Code
  The given project source codes are written in the easiest way so that most of the audience can digest it and it is 
