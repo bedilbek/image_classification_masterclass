@@ -1,5 +1,5 @@
 # Masterclass follow-up
-# This is the follow-up for today's (08.01.2020) masterclass on Multi-Class Image Classification.
+# This is the follow-up for today's (08.02.2020) masterclass on Multi-Class Image Classification.
 
 This repository is divided into 2 parts:
   1. Source Code
